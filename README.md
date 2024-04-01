@@ -6,11 +6,11 @@ Select a remote tile and cast the spell.
 
 This mod fires Earthquake and Rain Cloud at a selected tile in a remote location. Very quick players have difficulty standing in the exact center of the field, but selecting a tile and remotely casting a spell eliminates the need to fine-tune the standing position.
 
-Remote Earthquake is casted by holding down Left Ctrl key and clicking with a Hoe. While the Ctrl key is held down, the tool's range is extended and the tile selection square effect can be displayed at a distance.
+Remote Earthquake is casted by holding down Left Ctrl key and clicking with a Hoe. Remote Rain Cloud is casted by holding down Left Ctrl key and clicking with a Watering Can.
 
-Remote Rain Cloud is casted by holding down Left Ctrl key and clicking with a Watering Can. Rain clouds move in the direction they are fired, so you need to be careful about the positional relationship between the player and the tile.
+While holding down Ctrl key, the effective area of the spell becomes visible.
 
-To use remote spells, you will need to unlock the corresponding skills. (Farming Tier‡X Row1st Earthquake and Farming Tier‡Z Row1st Rain Cloud)
+To use remote spells, you will need to unlock the corresponding skills. (Farming Tier5 Row1st Earthquake and Farming Tier7 Row1st Rain Cloud)
 
 ## Options
 

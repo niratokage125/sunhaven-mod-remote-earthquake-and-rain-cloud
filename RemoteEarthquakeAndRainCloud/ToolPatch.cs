@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using System;
 using System.Collections.Generic;
+using System.Reflection.Emit;
 using System.Text;
 using UnityEngine;
 using Wish;
@@ -26,6 +27,41 @@ namespace RemoteEarthquakeAndRainCloud
                 return false;
             }
             return true;
+        }
+
+        public class MySetSelectionOnTileBodyArg
+        {
+            public GameObject _selection;
+            public Transform transform;
+        }
+        [HarmonyPatch("SetSelectionOnTile", new[] { typeof(Vector2Int) }), HarmonyReversePatch]
+        public static void MySetSelectionOnTileBody(object instance, Vector2Int pos)
+        {
+            IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+            {
+                var code = new List<CodeInstruction>(instructions);
+
+                for (int i = 0; i + 1 < code.Count; i++)
+                {
+                    if (code[i].opcode == OpCodes.Ldarg_0)
+                    {
+                        if (code[i + 1].opcode == OpCodes.Ldfld &&
+                            code[i + 1].OperandIs(AccessTools.Field(typeof(Tool), "_selection")))
+                        {
+                            code[i + 1].operand = AccessTools.Field(typeof(MySetSelectionOnTileBodyArg), nameof(MySetSelectionOnTileBodyArg._selection));
+                        }
+                        else if (code[i + 1].opcode == OpCodes.Call &&
+                                   code[i + 1].OperandIs(AccessTools.PropertyGetter(typeof(Component), nameof(Component.transform))))
+                        {
+                            code[i + 1].opcode = OpCodes.Ldfld;
+                            code[i + 1].operand = AccessTools.Field(typeof(MySetSelectionOnTileBodyArg), nameof(MySetSelectionOnTileBodyArg.transform));
+                        }
+                    }
+                }
+
+                return code;
+            }
+            _ = Transpiler(null);
         }
     }
 }
