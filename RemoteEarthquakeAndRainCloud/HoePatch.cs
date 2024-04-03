@@ -14,6 +14,7 @@ namespace RemoteEarthquakeAndRainCloud
     [HarmonyPatch(typeof(Hoe))]
     public static class HoePatch
     {
+        private static GameObject baseSelection;
         private static List<GameObject> selectionList;
         [HarmonyPatch("LateUpdate"), HarmonyReversePatch]
         public static void MyLateUpdate(object instance)
@@ -62,8 +63,11 @@ namespace RemoteEarthquakeAndRainCloud
             {
                 return;
             }
-            if (selectionList == null)
+            if (baseSelection != _selection)
             {
+                baseSelection = _selection;
+                selectionList?.ForEach(x => UnityEngine.Object.Destroy(x));
+                selectionList?.Clear();
                 selectionList = new List<GameObject>();
                 for(int i = 0; i < 25; i++)
                 {
@@ -93,7 +97,22 @@ namespace RemoteEarthquakeAndRainCloud
             }
         }
 
-
+        [HarmonyPatch("OnDisable"), HarmonyPrefix]
+        public static bool OnDisable_Prefix(Hoe __instance)
+        {
+            if(GameManager.ApplicationQuitting || GameManager.SceneTransitioning)
+            {
+                return true;
+            }
+            var _selection = Traverse.Create(__instance).Field<GameObject>("_selection").Value;
+            if(baseSelection == _selection)
+            {
+                baseSelection = null;
+                selectionList?.ForEach(x => UnityEngine.Object.Destroy(x));
+                selectionList?.Clear();
+            }
+            return true;
+        }
 
         [HarmonyPatch("LateUpdate"), HarmonyPrefix]
         public static bool LateUpdate_Prefix(Hoe __instance)
