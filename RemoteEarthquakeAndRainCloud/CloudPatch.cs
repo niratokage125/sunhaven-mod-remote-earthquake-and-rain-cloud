@@ -16,8 +16,8 @@ namespace RemoteEarthquakeAndRainCloud
         {
             if (fromLocalPlayer && Plugin.cloudSpell.Casting)
             {
-                var position = Plugin.cloudPos;
-                __instance.transform.position = new Vector3((float)(position.x), (float)(position.y) * 1.4142135f, -6f);
+                var pos = new Vector3((float)(Plugin.cloudPos.x), (float)(Plugin.cloudPos.y) * 1.4142135f + 0.5f, -6f);
+                __instance.transform.position = pos;
             }
             return true;
         }
