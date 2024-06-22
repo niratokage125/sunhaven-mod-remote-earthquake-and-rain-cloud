@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 using Wish;
+using PSS;
+using PSS.UI;
 
 namespace RemoteEarthquakeAndRainCloud
 {
@@ -15,24 +17,29 @@ namespace RemoteEarthquakeAndRainCloud
         {
             if (__instance.transform.Find("UI") != null && ____spell1Transform != null && Plugin.earthqueakeSpell == null) 
             {
-                Plugin.earthqueakeSpell = loadUseItem(306,__instance,____spell1Transform) as EarthquakeSpell;
-                Plugin.cloudSpell = loadUseItem(303, __instance, ____spell1Transform) as CloudSpell;
+                loadUseItem(306, __instance, ____spell1Transform, (useItem) => Plugin.earthqueakeSpell = useItem as EarthquakeSpell);
+                loadUseItem(303, __instance, ____spell1Transform, (useItem) => Plugin.cloudSpell = useItem as CloudSpell);
             }
         }
-        private static UseItem loadUseItem(int item, Player __instance, Transform ____spell1Transform)
+        private static void loadUseItem(int item, Player __instance, Transform ____spell1Transform, Action<UseItem>onLoaded)
         {
-            var data = ItemDatabase.GetItemData(item);
-            var transform = UnityEngine.Object.Instantiate<Transform>(____spell1Transform, ____spell1Transform.parent);
-            foreach (object obj in transform)
-            {
-                Transform t = (Transform)obj;
-                UnityEngine.Object.Destroy(t.gameObject);
-            }
-            var useItem = UnityEngine.Object.Instantiate<UseItem>(data.useItem, ____spell1Transform.position, data.useItem.transform.rotation, transform);
-            useItem.SetPlayer(__instance);
-            useItem.SetItemData(data);
-            Traverse.Create(useItem).Field("Casting").SetValue(false);
-            return useItem;
+            Database.GetData<ItemData>(
+                item, 
+                delegate (ItemData data) {
+                    var transform = UnityEngine.Object.Instantiate<Transform>(____spell1Transform, ____spell1Transform.parent);
+                    foreach (object obj in transform)
+                    {
+                        Transform t = (Transform)obj;
+                        UnityEngine.Object.Destroy(t.gameObject);
+                    }
+                    var useItem = UnityEngine.Object.Instantiate<UseItem>(data.useItem, ____spell1Transform.position, data.useItem.transform.rotation, transform);
+                    useItem.SetPlayer(__instance);
+                    useItem.SetItemData(data);
+                    Traverse.Create(useItem).Field("Casting").SetValue(false);
+                    onLoaded(useItem);
+                },
+                null
+            );
         }
 
         [HarmonyPatch(nameof(Player.UseItem), MethodType.Getter), HarmonyPostfix]
@@ -53,6 +60,5 @@ namespace RemoteEarthquakeAndRainCloud
                 return;
             }
         }
-
     }
 }
