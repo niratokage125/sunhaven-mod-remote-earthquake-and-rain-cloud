@@ -14,7 +14,7 @@ namespace RemoteEarthquakeAndRainCloud
     {
         private static GameObject baseSelection;
         private static List<GameObject> selectionList;
-        [HarmonyPatch("LateUpdate"), HarmonyReversePatch]
+        [HarmonyPatch("HandleWateringCanEachFrame"), HarmonyReversePatch]
         public static void MyLateUpdate(object instance)
         {
             IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)

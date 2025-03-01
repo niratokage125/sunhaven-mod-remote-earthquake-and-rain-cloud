@@ -16,7 +16,7 @@ namespace RemoteEarthquakeAndRainCloud
     {
         private static GameObject baseSelection;
         private static List<GameObject> selectionList;
-        [HarmonyPatch("LateUpdate"), HarmonyReversePatch]
+        [HarmonyPatch("HandleHoeEachFrame"), HarmonyReversePatch]
         public static void MyLateUpdate(object instance)
         {
             IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
@@ -40,10 +40,10 @@ namespace RemoteEarthquakeAndRainCloud
                     {
                         code[i].operand = AccessTools.Method(typeof(HoePatch), nameof(MyIsFarmableDataTile));
                     }
-                    else if (code[i].opcode == OpCodes.Call && 
-                               code[i].OperandIs(AccessTools.Method(typeof(Tool), "SetSelectionOnTile", new[] { typeof(Vector2Int) })))
+                    else if (code[i].opcode == OpCodes.Call &&
+                             code[i].OperandIs(AccessTools.Method(typeof(Hoe), "SelectCurrentHoeItemOLDGCALLOC")))
                     {
-                        code[i].operand = AccessTools.Method(typeof(HoePatch), nameof(MySetSelectionOnTile));
+                        code[i].operand = AccessTools.Method(typeof(HoePatch), nameof(MySelectCurrentHoeItemOLDGCALLOC));
                     }
                 }
 
@@ -55,9 +55,10 @@ namespace RemoteEarthquakeAndRainCloud
         {
             return true;
         }
-        public static void MySetSelectionOnTile(object instance, Vector2Int pos)
+        public static void MySelectCurrentHoeItemOLDGCALLOC(object instance)
         {
             Hoe hoe = (Hoe)instance;
+            var pos = Traverse.Create(hoe).Field<Vector2Int>("pos").Value;
             var _selection = Traverse.Create(hoe).Field<GameObject>("_selection").Value;
             if (_selection == null)
             {

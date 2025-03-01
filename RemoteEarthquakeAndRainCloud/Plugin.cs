@@ -22,7 +22,7 @@ namespace RemoteEarthquakeAndRainCloud
 
         private const string PluginGuid = "niratokage125.sunhaven.RemoteEarthquakeAndRainCloud";
         private const string PluginName = "RemoteEarthquakeAndRainCloud";
-        private const string PluginVer = "1.0.4";
+        private const string PluginVer = "1.0.5";
         private void Awake()
         {
             logger = Logger;

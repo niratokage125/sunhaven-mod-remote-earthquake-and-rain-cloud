@@ -43,18 +43,18 @@ namespace RemoteEarthquakeAndRainCloud
         }
 
         [HarmonyPatch(nameof(Player.UseItem), MethodType.Getter), HarmonyPostfix]
-        public static void UserItem_Postfix(ref UseItem __result)
+        public static void UseItem_Postfix(ref UseItem __result)
         {
             if(__result == null)
             {
                 return;
             }
-            if (Plugin.earthqueakeSpell.Casting)
+            if (Plugin.earthqueakeSpell && Plugin.earthqueakeSpell.Casting)
             {
                 __result = Plugin.earthqueakeSpell;
                 return;
             }
-            if (Plugin.cloudSpell.Casting)
+            if (Plugin.cloudSpell && Plugin.cloudSpell.Casting)
             {
                 __result = Plugin.cloudSpell;
                 return;
